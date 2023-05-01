@@ -1,9 +1,24 @@
 {
     "name":               "deepgram-cli",
+    "homepage":           "http://github.com/rse/deepgram-cli",
     "version":            "0.9.0",
-    "description":        "Convert Voice to Text with Deepgram API",
-    "author":             "Dr. Ralf S. Engelschall",
+    "description":        "CLI for Converting Voice to Text with Deepgram API",
     "license":            "MIT",
+    "author": {
+        "name":           "Dr. Ralf S. Engelschall",
+        "email":          "rse@engelschall.com",
+        "url":            "http://engelschall.com"
+    },
+    "keywords": [
+        "cli", "deepgram", "api", "voice", "text", "caption", "subtitle"
+    ],
+    "repository": {
+        "type":           "git",
+        "url":            "git://github.com/rse/deepgram-cli.git"
+    },
+    "bugs": {
+        "url":            "http://github.com/rse/deepgram-cli/issues"
+    },
     "bin": {
         "psd2pptx":       "deepgram.js"
     },
