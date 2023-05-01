@@ -6,15 +6,17 @@
 */
 
 /*  internal requirements  */
-const fs         = require("node:fs")
+const fs            = require("node:fs")
 
 /*  external requirements  */
-const dotenv       = require("dotenv")
-const yargs        = require("yargs")
-const chalk        = require("chalk")
-const tmp          = require("tmp")
-const { Deepgram } = require("@deepgram/sdk")
-const mimeTypes    = require("mime-types")
+const dotenv        = require("dotenv")
+const yargs         = require("yargs")
+const chalk         = require("chalk")
+const tmp           = require("tmp")
+const { Deepgram }  = require("@deepgram/sdk")
+const mimeTypes     = require("mime-types")
+const fileType      = require("file-type")
+const getStream     = require("get-stream")
 
 /*  act in an asynchronous context  */
 ;(async () => {
@@ -49,7 +51,7 @@ const mimeTypes    = require("mime-types")
             .describe("f", "output format (\"txt\", \"vtt+\", \"vtt\" or \"srt\")")
         .string("l").nargs("l", 1).alias("l", "language").default("l", "auto")
             .describe("l", "input language (\"auto\", \"en-US\", \"de\", etc.)")
-        .string("k").nargs("k", 1).alias("k", "api-key").default("k", process.env.DEEPGRAM_API_KEY ?? "")
+        .string("k").nargs("k", 1).alias("k", "api-key").default("k", "")
             .describe("k", "deepgram API key [REQUIRED]")
         .string("M").nargs("M", 1).alias("M", "model").default("M", "general")
             .describe("M", "conversion model (\"global\", etc)")
@@ -65,38 +67,50 @@ const mimeTypes    = require("mime-types")
         .demand(1)
         .parse(process.argv.slice(2))
 
-    /*  sanity checks  */
-    if (argv.apiKey === "")
-        throw new Error("require Deepgram API key (via \$DEEPGRAM_API_KEY environment variable or CLI option \"-k\")")
-    if (argv._.length !== 1)
-        throw new Error("require input file")
-    if (!argv.mode.match(/^(?:record|stream)$/))
-        throw new Error("invalid processing mode")
-
     /*  verbose message printing  */
     const verbose = (msg) => {
         if (argv.verbose)
             process.stderr.write(`${msg}\n`)
     }
 
+    /*  sanity check input  */
+    if (argv._.length !== 1)
+        throw new Error("require input file")
+
     /*  instantiate Deepgram SDK  */
+    if (argv.apiKey === "")
+        argv.apiKey = process.env.DEEPGRAM_API_KEY ?? ""
+    if (argv.apiKey === "")
+        throw new Error("require Deepgram API key (via \$DEEPGRAM_API_KEY env-variable or CLI-option \"-k\")")
     const deepgram = new Deepgram(argv.apiKey)
 
     /*  dispatch according to mode  */
+    if (!argv.mode.match(/^(?:record|stream)$/))
+        throw new Error("invalid processing mode")
     if (argv.mode === "record") {
         verbose(`++ calling ${chalk.bold("Deepgram API")} for (pre-)recorded media`)
 
         /*  determine conversion source  */
         const source = {}
         if (argv._[0].match(/^https?:\/\/.+$/)) {
-            verbose(`-- remote input: ${chalk.blue(argv._[0])}`)
+            verbose(`-- remote input: URL (${chalk.blue(argv._[0])})`)
             source.url = argv._[0]
         }
-        else {
-            verbose(`-- local input: ${chalk.blue(argv._[0])}`)
-            const buffer = await fs.promises.readFile(argv._[0], { encoding: null })
+        else if (argv._[0] === "-") {
+            verbose(`-- local input: stdin`)
+            const buffer = await getStream.buffer(process.stdin)
+            const mimetype = (await fileType.fromBuffer(buffer))?.mime ?? "application/octet-stream"
             source.buffer   = buffer
-            source.mimetype = mimeTypes.lookup(argv._[0])
+            source.mimetype = mimetype
+        }
+        else {
+            verbose(`-- local input: file (${chalk.blue(argv._[0])})`)
+            const buffer = await fs.promises.readFile(argv._[0], { encoding: null })
+            let mimetype = (await fileType.fromBuffer(buffer))?.mime ?? ""
+            if (mimetype === "")
+                mimetype = mimeTypes.lookup(argv._[0])
+            source.buffer   = buffer
+            source.mimetype = mimetype
         }
 
         /*  determine conversion options  */
