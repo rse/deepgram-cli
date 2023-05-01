@@ -27,10 +27,15 @@ $ npm install -g deepgram-cli
 Usage
 -----
 
+First, ensure the CLI has access to your Deepgram API key
+and optionally also to your DeepL API key:
+
 ```
-# ensure the CLI has access to the Deepgram API
-$ export DEEPGRAM_API_KEY="[...]"
+$ export DEEPGRAM_API_KEY="[...]" # mandatory
+$ export DEEPL_API_KEY="[...]"    # optional
 ```
+
+Then generate english SRT subtitles for a remote demo WAV file (containing english voice):
 
 ```
 # generate SRT captions/subtitles
@@ -52,8 +57,10 @@ Life moves pretty fast.
 You don't stop and look around once in a while. You could miss it.
 ```
 
+Then generate german VTT subtitles for local OGG file (containing german voice):
+
 ```
-$ deepgram -f vtt sample.ogg
+$ deepgram -f vtt -l de -T enhanced sample.ogg
 WEBVTT
 
 1
@@ -75,6 +82,33 @@ Didaktik für Software Engineering. Also wie kann man in der Lehre von Software 
 5
 00:00:18.550 --> 00:00:19.050
 profitieren.
+```
+
+Then generate english VTT subtitles for local OGG file (containing german voice):
+
+```
+$ deepgram -f vtt -l de -T enhanced -t en-US sample.ogg
+WEBVTT
+
+1
+00:00:00.999 --> 00:00:05.937
+Welcome to a recording of my presentation on the occasion of the Software Engineering Conference two thousand and three
+
+2
+00:00:06.756 --> 00:00:07.536
+in Paderborn.
+
+3
+00:00:08.184 --> 00:00:09.364
+The topic of multimedia
+
+4
+00:00:09.784 --> 00:00:17.451
+Didactics for Software Engineering. So how can you teach software engineering on the didactic side of multimedia.
+
+5
+00:00:18.550 --> 00:00:19.050
+benefit.
 ```
 
 License

@@ -14,6 +14,7 @@ const yargs         = require("yargs")
 const chalk         = require("chalk")
 const tmp           = require("tmp")
 const { Deepgram }  = require("@deepgram/sdk")
+const DeepL         = require("deepl-node")
 const mimeTypes     = require("mime-types")
 const fileType      = require("file-type")
 const getStream     = require("get-stream")
@@ -48,6 +49,8 @@ const getStream     = require("get-stream")
             .describe("f", "output format (\"txt\", \"vtt+\", \"vtt\" or \"srt\")")
         .string("l").nargs("l", 1).alias("l", "language").default("l", "auto")
             .describe("l", "input language (\"auto\", \"en-US\", \"de\", etc.)")
+        .string("t").nargs("t", 1).alias("t", "translate").default("t", "none")
+            .describe("t", "translation language (\"none\", \"en\", \"de\", etc.)")
         .string("M").nargs("M", 1).alias("M", "model").default("M", "general")
             .describe("M", "conversion model (\"global\", etc)")
         .string("V").nargs("V", 1).alias("V", "version").default("V", "")
@@ -72,11 +75,20 @@ const getStream     = require("get-stream")
     if (argv._.length !== 1)
         throw new Error("require input file")
 
-    /*  instantiate Deepgram SDK  */
+    /*  instantiate Deepgram API SDK  */
     const deepgramApiKey = process.env.DEEPGRAM_API_KEY ?? ""
     if (deepgramApiKey === "")
         throw new Error("require Deepgram API key (via \$DEEPGRAM_API_KEY environment variable)")
     const deepgram = new Deepgram(deepgramApiKey)
+
+    /*  instantiate DeepL API SDK (optional)  */
+    let translator = null
+    if (argv.translate !== "none") {
+        const deeplApiKey = process.env.DEEPL_API_KEY ?? ""
+        if (deeplApiKey === "")
+            throw new Error("require DeepL API key (via \$DEEPL_API_KEY environment variable)")
+        translator = new DeepL.Translator(deeplApiKey)
+    }
 
     /*  determine conversion source  */
     verbose("++ reading input")
@@ -142,13 +154,24 @@ const getStream     = require("get-stream")
     let output = ""
     const makeTime = (time) =>
         new Date(time * 1000).toISOString().substr(11, 12)
+    const translate = async (text) => {
+        const result = await translator.translateText(text, argv.language.replace(/-.+$/, ""), argv.translate, {
+            splitSentences: "off"
+        })
+        return (result?.text ?? text)
+    }
     if (argv.format === "txt") {
         for (let i = 0; i < response.results.utterances.length; i++) {
             const utterance = response.results.utterances[i]
-            output += `${utterance.transcript}\n`
+            let text = utterance.transcript
+            if (argv.translate !== "none")
+                text = await translate(text)
+            output += `${text}\n`
         }
     }
     else if (argv.format === "vtt+") {
+        if (argv.translate)
+            throw new Error("sorry, VTT+ is not supported in combination with translation")
         output += "WEBVTT\n\n"
         let i = 1
         for (const utterance of response.results.utterances) {
@@ -172,9 +195,12 @@ const getStream     = require("get-stream")
             const utterance = response.results.utterances[i]
             const start = makeTime(utterance.start)
             const end   = makeTime(utterance.end)
+            let text = utterance.transcript
+            if (argv.translate !== "none")
+                text = await translate(text)
             output += `${i + 1}\n`
             output += `${start} --> ${end}\n`
-            output += `${utterance.transcript}\n\n`
+            output += `${text}\n\n`
         }
     }
     else if (argv.format === "srt") {
@@ -182,9 +208,12 @@ const getStream     = require("get-stream")
             const utterance = response.results.utterances[i]
             const start = makeTime(utterance.start).replace(".", ",")
             const end   = makeTime(utterance.end).replace(".", ",")
+            let text = utterance.transcript
+            if (argv.translate !== "none")
+                text = await translate(text)
             output += `${i + 1}\n`
             output += `${start} --> ${end}\n`
-            output += `${utterance.transcript}\n\n`
+            output += `${text}\n\n`
         }
     }
     if (argv.output === "-")
