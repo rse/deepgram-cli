@@ -1,7 +1,7 @@
 {
     "name":               "deepgram-cli",
     "homepage":           "http://github.com/rse/deepgram-cli",
-    "version":            "0.9.2",
+    "version":            "0.9.3",
     "description":        "CLI for Converting Voice to Text with Deepgram API",
     "license":            "MIT",
     "author": {
