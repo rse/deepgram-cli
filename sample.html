@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test</title>
+        <meta charset="UTF-8"/>
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        <style type="text/css">
+            html, body {
+                margin: 40px;
+            }
+            video {
+                width: 100%;
+                height: auto;
+            }
+            video::cue {
+                color: #ffffff;
+            }
+            video::cue(b) {
+                color: #d0e0ff;
+                font-weight: normal;
+            }
+        </style>
+    </head>
+    <body>
+        <video controls autoplay src="sample.mp4">
+            <track default src="sample.vtt"/>
+        </video>
+    </body>
+</html>
