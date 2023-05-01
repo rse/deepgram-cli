@@ -2,7 +2,7 @@
 deepgram-cli
 ============
 
-**Convert Voice to Text with Deepgram API**
+**CLI for converting Voice to Text with Deepgram API (and DeepL API)**
 
 <p/>
 <img src="https://nodei.co/npm/deepgram-cli.png?downloads=true&stars=true" alt=""/>
@@ -13,9 +13,12 @@ deepgram-cli
 Abstract
 --------
 
-This is a small Node.js-based Command-Line Interface (CLI) for
-converting Voice to Text with the excellent Deepgram API. It can be used
-to generate plain text output or WebVTT/SRT caption/subtitle outputs.
+This is a small Command-Line Interface (CLI) for converting Voice to
+Text (VTT) with the excellent AI-based [Deepgram](https://deepgram.com)
+API. It can be used to generate plain text output or WebVTT/SRT
+caption/subtitle outputs. The sentences in the output can be optionally
+translated to a different language with the awesome AI-based
+[DeepL](https://deepl.com) API.
 
 Installation
 ------------
@@ -27,15 +30,15 @@ $ npm install -g deepgram-cli
 Usage
 -----
 
-First, ensure the CLI has access to your Deepgram API key
-and optionally also to your DeepL API key:
+First, ensure the `deepgram` CLI has access to your **Deepgram** API key
+and optionally also to your **DeepL** API key:
 
 ```
 $ export DEEPGRAM_API_KEY="[...]" # mandatory
 $ export DEEPL_API_KEY="[...]"    # optional
 ```
 
-Then generate english SRT subtitles for a remote demo WAV file (containing english voice):
+Then generate english subtitles in SRT format for a remotely available demonstraton WAV file (containing english voice):
 
 ```
 # generate SRT captions/subtitles
@@ -57,7 +60,7 @@ Life moves pretty fast.
 You don't stop and look around once in a while. You could miss it.
 ```
 
-Then generate german VTT subtitles for local OGG file (containing german voice):
+Then generate german subtitles in WebVTT format for a locally available Ogg file (containing german voice):
 
 ```
 $ deepgram -f vtt -l de -T enhanced sample.ogg
@@ -84,7 +87,7 @@ Didaktik für Software Engineering. Also wie kann man in der Lehre von Software 
 profitieren.
 ```
 
-Then generate english VTT subtitles for local OGG file (containing german voice):
+Then generate english subtitles in WebVTT format for a locally available Ogg file (containing german voice):
 
 ```
 $ deepgram -f vtt -l de -T enhanced -t en-US sample.ogg

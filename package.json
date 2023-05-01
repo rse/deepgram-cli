@@ -36,17 +36,21 @@
     "devDependencies": {
         "npm-run-all":    "4.1.5",
         "shx":            "0.3.4",
-        "pkg":            "5.8.1"
+        "pkg":            "5.8.1",
+        "remark-cli":     "11.0.0",
+        "remark":         "14.0.2",
+        "remark-man":     "8.0.1"
     },
     "upd":                [ "!chalk", "!file-type" ],
     "scripts": {
         "update":         "upd",
-        "package":        "npm-run-all -s package:gen package:mv:lnx package:mv:win package:mv:mac",
+        "package":        "npm-run-all -s generate:man package:gen package:mv:lnx package:mv:win package:mv:mac",
         "package:gen":    "pkg -t node18-linux-x64,node18-win-x64,node18-macos-x64 .",
         "package:mv:lnx": "shx mv deepgram-cli-linux   deepgram-lnx-x64",
         "package:mv:win": "shx mv deepgram-cli-win.exe deepgram-win-x64.exe",
         "package:mv:mac": "shx mv deepgram-cli-macos   deepgram-mac-x64",
         "package:clean":  "shx rm -f deepgram-lnx-x64 deepgram-win-x64.exe deepgram-mac-x64",
+        "generate:man":   "remark --quiet --use remark-man --output deepgram.1 deepgram.md",
         "test":           "node deepgram.js -v -f vtt -o sample.vtt sample.ogg",
         "clean":          "npm-run-all -s package:clean"
     }
