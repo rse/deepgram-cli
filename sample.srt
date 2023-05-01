@@ -1,0 +1,20 @@
+1
+00:00:00,999 --> 00:00:05,937
+Herzlich willkommen zu einer Aufzeichnung meiner Präsentation anlässlich der Software Engineering Konferenz zweitausenddreiundzwanzig
+
+2
+00:00:06,756 --> 00:00:07,536
+in Paderborn.
+
+3
+00:00:08,184 --> 00:00:09,364
+Das Thema multimediale
+
+4
+00:00:09,784 --> 00:00:17,451
+Didaktik für Software Engineering. Also wie kann man in der Lehre von Software Engineering auf der didaktischen Seite von Multimedia
+
+5
+00:00:18,550 --> 00:00:19,050
+profitieren.
+
