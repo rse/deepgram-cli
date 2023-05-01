@@ -15,7 +15,7 @@ Abstract
 
 This is a small Node.js-based Command-Line Interface (CLI) for
 converting Voice to Text with the excellent Deepgram API. It can be used
-to generate plain text output or WebVTT or SRT caption/subtitle outputs.
+to generate plain text output or WebVTT/SRT caption/subtitle outputs.
 
 Installation
 ------------
