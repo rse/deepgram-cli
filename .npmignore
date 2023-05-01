@@ -1,6 +1,7 @@
 .env
 sample.mp4
 sample.ogg
+sample.vtt
 deepgram-lnx-x64
 deepgram-mac-x64
 deepgram-win-x64.exe
