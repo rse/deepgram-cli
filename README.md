@@ -114,6 +114,8 @@ Didactics for Software Engineering. So how can you teach software engineering on
 benefit.
 ```
 
+For all details about the `deepgram` CLI, please read the corresponding [Unix manual page](./deepgram.md).
+
 License
 -------
 
