@@ -37,7 +37,7 @@ const getStream     = require("get-stream")
             "[-V|--version <deepgram-version>] " +
             "[-T|--tier <deepgram-tier>] " +
             "[-O|--options <deepgram-options>] " +
-            " <input-file>"
+            "<input-file>"
         )
         .help("h").alias("h", "help").default("h", false)
             .describe("h", "show usage help")
