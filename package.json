@@ -40,9 +40,9 @@
         "update":         "upd",
         "package":        "npm-run-all -s package:gen package:mv:lnx package:mv:win package:mv:mac",
         "package:gen":    "pkg -t node18-linux-x64,node18-win-x64,node18-macos-x64 .",
-        "package:mv:lnx": "shx mv deepgram-linux   deepgram-lnx-x64",
-        "package:mv:win": "shx mv deepgram-win.exe deepgram-win-x64.exe",
-        "package:mv:mac": "shx mv deepgram-macos   deepgram-mac-x64",
+        "package:mv:lnx": "shx mv deepgram-cli-linux   deepgram-lnx-x64",
+        "package:mv:win": "shx mv deepgram-cli-win.exe deepgram-win-x64.exe",
+        "package:mv:mac": "shx mv deepgram-cli-macos   deepgram-mac-x64",
         "package:clean":  "shx rm -f deepgram-lnx-x64 deepgram-win-x64.exe deepgram-mac-x64",
         "test":           "node deepgram.js -v -f vtt -o sample.vtt sample.ogg",
         "clean":          "npm-run-all -s package:clean"
