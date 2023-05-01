@@ -33,8 +33,8 @@ const getStream     = require("get-stream")
             "[-o|--output <output-file>] " +
             "[-f|--format <output-format>] " +
             "[-l|--language <input-language>] " +
+            "[-t|--translate <output-language>] " +
             "[-M|--model <deepgram-model>] " +
-            "[-V|--version <deepgram-version>] " +
             "[-T|--tier <deepgram-tier>] " +
             "[-O|--options <deepgram-options>] " +
             "<input-file>"
@@ -53,8 +53,6 @@ const getStream     = require("get-stream")
             .describe("t", "translation language (\"none\", \"en\", \"de\", etc.)")
         .string("M").nargs("M", 1).alias("M", "model").default("M", "general")
             .describe("M", "conversion model (\"global\", etc)")
-        .string("V").nargs("V", 1).alias("V", "version").default("V", "")
-            .describe("V", "conversion version (\"\", etc)")
         .string("T").nargs("T", 1).alias("T", "tier").default("T", "nova")
             .describe("T", "conversion tier (\"nova\", etc)")
         .string("O").nargs("O", 1).alias("O", "options").default("O", "")
@@ -121,8 +119,6 @@ const getStream     = require("get-stream")
         punctuate:  true,
         utterances: true
     }
-    if (argv.version !== "")
-        options.version = argv.version
     if (argv.language === "auto")
         options.detect_language = true
     else
