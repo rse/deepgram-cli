@@ -32,10 +32,10 @@ const getStream     = require("get-stream")
             "[-o|--output <output-file>] " +
             "[-f|--format <output-format>] " +
             "[-l|--language <input-language>] " +
-            "[-k|--key <deepgram-api-key>] " +
             "[-M|--model <deepgram-model>] " +
             "[-V|--version <deepgram-version>] " +
             "[-T|--tier <deepgram-tier>] " +
+            "[-O|--options <deepgram-options>] " +
             " <input-file>"
         )
         .help("h").alias("h", "help").default("h", false)
@@ -48,8 +48,6 @@ const getStream     = require("get-stream")
             .describe("f", "output format (\"txt\", \"vtt+\", \"vtt\" or \"srt\")")
         .string("l").nargs("l", 1).alias("l", "language").default("l", "auto")
             .describe("l", "input language (\"auto\", \"en-US\", \"de\", etc.)")
-        .string("k").nargs("k", 1).alias("k", "api-key").default("k", "")
-            .describe("k", "deepgram API key [REQUIRED]")
         .string("M").nargs("M", 1).alias("M", "model").default("M", "general")
             .describe("M", "conversion model (\"global\", etc)")
         .string("V").nargs("V", 1).alias("V", "version").default("V", "")
@@ -75,11 +73,10 @@ const getStream     = require("get-stream")
         throw new Error("require input file")
 
     /*  instantiate Deepgram SDK  */
-    if (argv.apiKey === "")
-        argv.apiKey = process.env.DEEPGRAM_API_KEY ?? ""
-    if (argv.apiKey === "")
-        throw new Error("require Deepgram API key (via \$DEEPGRAM_API_KEY env-variable or CLI-option \"-k\")")
-    const deepgram = new Deepgram(argv.apiKey)
+    const deepgramApiKey = process.env.DEEPGRAM_API_KEY ?? ""
+    if (deepgramApiKey === "")
+        throw new Error("require Deepgram API key (via \$DEEPGRAM_API_KEY environment variable)")
+    const deepgram = new Deepgram(deepgramApiKey)
 
     /*  determine conversion source  */
     verbose("++ reading input")
