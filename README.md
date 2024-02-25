@@ -114,6 +114,9 @@ Didactics for Software Engineering. So how can you teach software engineering on
 benefit.
 ```
 
+Additionally, the format `vtt+` is also WebVTT format, but where the
+current word is highlighted in bold.
+
 For all details about the `deepgram` CLI, please read the corresponding [Unix manual page](./deepgram.md).
 
 License
