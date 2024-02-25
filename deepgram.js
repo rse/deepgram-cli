@@ -163,7 +163,7 @@ const getStream     = require("get-stream")
         }
     }
     else if (argv.format === "vtt+") {
-        if (argv.translate)
+        if (argv.translate !== "none")
             throw new Error("sorry, VTT+ is not supported in combination with translation")
         output += "WEBVTT\n\n"
         let i = 1
