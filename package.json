@@ -23,14 +23,13 @@
         "deepgram":       "deepgram.js"
     },
     "dependencies": {
-        "dotenv":         "16.3.1",
+        "dotenv":         "16.4.5",
         "yargs":          "17.7.2",
         "chalk":          "4.1.2",
         "tmp":            "0.2.1",
-        "@deepgram/sdk":  "2.4.0",
-        "deepl-node":     "1.10.2",
+        "@deepgram/sdk":  "3.1.9",
+        "deepl-node":     "1.11.1",
         "mime-types":     "2.1.35",
-        "file-type":      "16.5.3",
         "get-stream":     "6.0.1"
     },
     "devDependencies": {

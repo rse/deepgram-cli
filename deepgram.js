@@ -13,10 +13,9 @@ const dotenv        = require("dotenv")
 const yargs         = require("yargs")
 const chalk         = require("chalk")
 const tmp           = require("tmp")
-const { Deepgram }  = require("@deepgram/sdk")
+const Deepgram      = require("@deepgram/sdk")
 const DeepL         = require("deepl-node")
 const mimeTypes     = require("mime-types")
-const fileType      = require("file-type")
 const getStream     = require("get-stream")
 
 /*  act in an asynchronous context  */
@@ -77,7 +76,7 @@ const getStream     = require("get-stream")
     const deepgramApiKey = process.env.DEEPGRAM_API_KEY ?? ""
     if (deepgramApiKey === "")
         throw new Error("require Deepgram API key (via \$DEEPGRAM_API_KEY environment variable)")
-    const deepgram = new Deepgram(deepgramApiKey)
+    const deepgram = Deepgram.createClient(deepgramApiKey)
 
     /*  instantiate DeepL API SDK (optional)  */
     let translator = null
@@ -98,18 +97,12 @@ const getStream     = require("get-stream")
     else if (argv._[0] === "-") {
         verbose(`-- local input: stdin`)
         const buffer = await getStream.buffer(process.stdin)
-        const mimetype = (await fileType.fromBuffer(buffer))?.mime ?? "application/octet-stream"
-        source.buffer   = buffer
-        source.mimetype = mimetype
+        source.buffer = buffer
     }
     else {
         verbose(`-- local input: file (${chalk.blue(argv._[0])})`)
         const buffer = await fs.promises.readFile(argv._[0], { encoding: null })
-        let mimetype = (await fileType.fromBuffer(buffer))?.mime ?? ""
-        if (mimetype === "")
-            mimetype = mimeTypes.lookup(argv._[0])
-        source.buffer   = buffer
-        source.mimetype = mimetype
+        source.buffer = buffer
     }
 
     /*  determine conversion options  */
@@ -141,7 +134,11 @@ const getStream     = require("get-stream")
 
     /*  call Deepgram API  */
     verbose(`++ calling ${chalk.bold("Deepgram API")}`)
-    const response = await deepgram.transcription.preRecorded(source, options)
+    const { result, error } = await (source.url ?
+        deepgram.listen.prerecorded.transcribeUrl(source.url, options) :
+        deepgram.listen.prerecorded.transcribeFile(source.buffer, options))
+    if (error)
+        throw new Error(`transcription failed: ${error}`)
 
     /*  generate output  */
     verbose("++ writing output")
@@ -157,8 +154,8 @@ const getStream     = require("get-stream")
         return (result?.text ?? text)
     }
     if (argv.format === "txt") {
-        for (let i = 0; i < response.results.utterances.length; i++) {
-            const utterance = response.results.utterances[i]
+        for (let i = 0; i < result.results.utterances.length; i++) {
+            const utterance = result.results.utterances[i]
             let text = utterance.transcript
             if (argv.translate !== "none")
                 text = await translate(text)
@@ -170,7 +167,7 @@ const getStream     = require("get-stream")
             throw new Error("sorry, VTT+ is not supported in combination with translation")
         output += "WEBVTT\n\n"
         let i = 1
-        for (const utterance of response.results.utterances) {
+        for (const utterance of result.results.utterances) {
             let transcript = utterance.transcript.split(/\s+/)
             let j = 0
             for (const word of utterance.words) {
@@ -187,8 +184,8 @@ const getStream     = require("get-stream")
     }
     else if (argv.format === "vtt") {
         output += "WEBVTT\n\n"
-        for (let i = 0; i < response.results.utterances.length; i++) {
-            const utterance = response.results.utterances[i]
+        for (let i = 0; i < result.results.utterances.length; i++) {
+            const utterance = result.results.utterances[i]
             const start = makeTime(utterance.start)
             const end   = makeTime(utterance.end)
             let text = utterance.transcript
@@ -200,8 +197,8 @@ const getStream     = require("get-stream")
         }
     }
     else if (argv.format === "srt") {
-        for (let i = 0; i < response.results.utterances.length; i++) {
-            const utterance = response.results.utterances[i]
+        for (let i = 0; i < result.results.utterances.length; i++) {
+            const utterance = result.results.utterances[i]
             const start = makeTime(utterance.start).replace(".", ",")
             const end   = makeTime(utterance.end).replace(".", ",")
             let text = utterance.transcript
