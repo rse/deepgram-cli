@@ -40,7 +40,7 @@
         "remark":         "15.0.1",
         "remark-man":     "9.0.0"
     },
-    "upd":                [ "!chalk", "!file-type", "!get-stream" ],
+    "upd":                [ "!chalk", "!get-stream" ],
     "scripts": {
         "update":         "upd",
         "package":        "npm-run-all -s generate:man package:gen package:mv:lnx package:mv:win package:mv:mac",
