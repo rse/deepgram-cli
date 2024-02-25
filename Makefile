@@ -1,6 +1,6 @@
 ##
 ##  deepgram-cli -- Convert Voice to Text with Deepgram API
-##  Copyright (c) 2023 Dr. Ralf S. Engelschall <rse@engelschall.com>
+##  Copyright (c) 2023-2024 Dr. Ralf S. Engelschall <rse@engelschall.com>
 ##  Licensed under MIT Open Source license.
 ##
 
